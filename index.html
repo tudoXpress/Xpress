@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TudoXpress — Loja</title>
+<style>
+  :root{
+    --bg:#0f0f10; --card:#151618; --muted:#1c1e22; --text:#f2f2f3;
+    --sub:#b9bdc6; --brand:#ff7a00; --brand-2:#ffaa55; --ok:#22c55e; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b0b0c,#151517);}
+  .container{max-width:1200px;margin:0 auto;padding:20px}
+  header{display:flex;align-items:center;gap:14px;justify-content:space-between;margin-bottom:18px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{
+    width:42px;height:42px;border-radius:999px;background:
+      radial-gradient(closest-side,#ff7a00 0 55%,transparent 56%),
+      radial-gradient(closest-side,#ffe0c7 0 60%,transparent 61%),
+      linear-gradient(135deg,#ff7a00,#ffaa55);
+    box-shadow:0 0 0 3px #242424, 0 6px 18px rgba(0,0,0,.6);
+  }
+  h1{color:var(--text);font-size:22px;margin:0}
+  .sub{color:var(--sub);font-size:13px}
+  nav{display:flex;gap:8px;flex-wrap:wrap}
+  button, .btn{
+    background:var(--brand);color:#111;padding:10px 14px;border:0;border-radius:12px;font-weight:700;cursor:pointer;
+    transition:.2s transform,.2s filter; box-shadow:0 6px 16px rgba(255,122,0,.15);
+  }
+  button:hover,.btn:hover{transform:translateY(-1px);filter:saturate(1.1)}
+  .btn-outline{background:#202126;color:var(--text);border:1px solid #2b2d33;box-shadow:none}
+  .grid{display:grid;gap:16px}
+  .grid.produtos{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .card{background:var(--card);border:1px solid #24262c;border-radius:18px;padding:14px}
+  .card.soft{background:#121316}
+  .card h3{margin:8px 0 6px;color:var(--text);font-size:16px}
+  .price{color:#e6e8eb;font-weight:800}
+  .muted{color:#9aa1ab;font-size:12px}
+  .qty{display:flex;align-items:center;gap:8px}
+  input, select, textarea{
+    width:100%;background:#0f1114;border:1px solid #26282f;color:var(--text);
+    padding:10px 12px;border-radius:12px;outline:none;transition:border .2s;
+  }
+  input:focus,select:focus,textarea:focus{border-color:#3a3f48}
+  label{color:#d7dbe3;font-size:13px}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .col-6{grid-column:span 6} .col-4{grid-column:span 4} .col-8{grid-column:span 8} .col-12{grid-column:span 12}
+  .section{margin-top:14px}
+  .section h2{color:#fff;font-size:18px;margin:0 0 8px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:#1c1e22;border:1px solid #2a2d34;border-radius:999px;padding:6px 10px;color:#d7dbe3;font-size:12px}
+  .flex{display:flex;gap:12px;align-items:center}
+  .between{justify-content:space-between}
+  .right{text-align:right}
+  .cart{max-height:360px;overflow:auto}
+  .cart .item{display:grid;grid-template-columns:1fr 70px 90px 26px;gap:10px;align-items:center;border-bottom:1px dashed #272a31;padding:10px 0}
+  .total{font-size:18px;color:#fff}
+  .ok{color:var(--ok)} .bad{color:var(--danger)}
+  .tag{background:#101114;border:1px solid #23262d;padding:4px 8px;border-radius:8px;color:#cdd3de;font-size:12px}
+  .footnote{color:#98a2b3;font-size:12px}
+  .tabs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .tab{padding:8px 12px;border-radius:10px;background:#101114;border:1px solid #24262d;color:#cdd3de;cursor:pointer}
+  .tab.active{background:#17181c;border-color:#2a2d33}
+  img.prod{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:#0c0d10;border:1px solid #23262d}
+  .qr{background:#0f1114;border:1px dashed #30323a;border-radius:16px;padding:12px;text-align:center}
+  .copy{display:flex;gap:8px}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{border-bottom:1px solid #23262d;padding:10px;color:#d7dbe3;font-size:13px}
+  .table th{color:#9ea6b2;font-weight:600;text-align:left}
+  .empty{border:1px dashed #292b32;border-radius:14px;padding:18px;text-align:center;color:#9aa1ab}
+  .badge{padding:3px 8px;border-radius:999px;border:1px solid #2b2d33;background:#141519;font-size:11px;color:#c7cbd4}
+  footer{margin:36px 0 20px;color:#808793;font-size:12px;text-align:center}
+  @media (max-width: 960px){
+    .row{grid-template-columns:repeat(6,1fr)}
+    .col-8{grid-column:span 6} .col-6{grid-column:span 6} .col-4{grid-column:span 6}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>TudoXpress</h1>
+        <div class="sub">Sua compra rápida, segura e 100% online</div>
+      </div>
+    </div>
+    <nav>
+      <button class="btn-outline" onclick="switchView('loja')">Loja</button>
+      <button class="btn-outline" onclick="switchView('checkout')">Checkout</button>
+      <button class="btn-outline" onclick="switchView('admin')">Admin</button>
+      <button onclick="clearDemo()">Reset (demo)</button>
+    </nav>
+  </header>
+
+  <!-- LOJA -->
+  <section id="view-loja">
+    <div class="section">
+      <div class="flex between">
+        <h2>Produtos</h2>
+        <span class="pill">Carrinho: <b id="cartCount">0</b> itens</span>
+      </div>
+      <div class="grid produtos" id="listaProdutos"></div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT -->
+  <section id="view-checkout" style="display:none">
+    <div class="row">
+      <div class="col-8">
+        <div class="card">
+          <h2>Dados do Cliente</h2>
+          <div class="row">
+            <div class="col-6">
+              <label>Nome completo</label>
+              <input id="cliNome" placeholder="Seu nome"/>
+            </div>
+            <div class="col-6">
+              <label>WhatsApp</label>
+              <input id="cliWhats" placeholder="(DDD) 9 9999-9999"/>
+            </div>
+            <div class="col-4">
+              <label>CEP</label>
+              <input id="cliCEP" placeholder="00000-000" onblur="calcFrete()"/>
+            </div>
+            <div class="col-8 flex" style="align-items:end">
+              <button class="btn-outline" onclick="calcFrete()">Calcular Frete</button>
+              <span id="freteInfo" class="tag">Frete não calculado</span>
+            </div>
+            <div class="col-6">
+              <label>Endereço</label>
+              <input id="cliEnd" placeholder="Rua, avenida..."/>
+            </div>
+            <div class="col-2">
+              <label>Número</label>
+              <input id="cliNum" placeholder="nº"/>
+            </div>
+            <div class="col-4">
+              <label>Bairro</label>
+              <input id="cliBairro" placeholder="Bairro"/>
+            </div>
+            <div class="col-6">
+              <label>Cidade</label>
+              <input id="cliCidade" placeholder="Cidade"/>
+            </div>
+            <div class="col-6">
+              <label>Estado (UF)</label>
+              <input id="cliUF" placeholder="UF"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section">
+          <h2>Pagamento via PIX</h2>
+          <div class="row">
+            <div class="col-6">
+              <div class="qr">
+                <img id="pixQR" alt="QR Code PIX" style="width:100%;max-width:360px;border-radius:12px"/>
+                <div class="footnote" style="margin-top:8px">Escaneie o QR para pagar</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label>Chave PIX (copia e cola)</label>
+              <div class="copy">
+                <input id="pixKey" readonly value="+5538998297529"/>
+                <button onclick="copyPix()">Copiar</button>
+              </div>
+              <div style="margin-top:12px">
+                <div class="tag">Total a pagar: <b id="totalPix">R$ 0,00</b></div>
+              </div>
+              <div style="margin-top:18px">
+                <label class="flex" style="gap:10px">
+                  <input type="checkbox" id="pixConfirm" style="width:auto"> Declaro que realizei o pagamento PIX.
+                </label>
+              </div>
+              <div style="margin-top:16px" class="flex">
+                <button onclick="finalizarPedido()">Concluir compra</button>
+                <button class="btn-outline" onclick="window.print()">Imprimir</button>
+              </div>
+              <div class="footnote" style="margin-top:10px">
+                Após concluir, seu pedido fica salvo em <b>Admin &gt; Pedidos</b>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <h2>Seu carrinho</h2>
+          <div id="cartBox" class="cart"></div>
+          <div style="margin-top:10px">
+            <div class="flex between">
+              <span class="muted">Subtotal</span>
+              <span id="subTotal" class="total">R$ 0,00</span>
+            </div>
+            <div class="flex between">
+              <span class="muted">Frete</span>
+              <span id="freteValor" class="total">R$ 0,00</span>
+            </div>
+            <div class="flex between" style="margin-top:8px;border-top:1px dashed #2b2d33;padding-top:8px">
+              <span class="total">Total</span>
+              <span id="grandTotal" class="total">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" style="display:none">
+    <div class="row">
+      <div class="col-6">
+        <div class="card">
+          <h2>Cadastro de Produto</h2>
+          <div class="row">
+            <div class="col-8"><label>Nome</label><input id="pNome" placeholder="Ex: Mini Ventilador"/></div>
+            <div class="col-4"><label>Preço (R$)</label><input id="pPreco" type="number" step="0.01" placeholder="0,00"/></div>
+            <div class="col-6"><label>SKU/Código</label><input id="pSKU" placeholder="Opcional"/></div>
+            <div class="col-6"><label>URL da imagem</label><input id="pImg" placeholder="https://"/></div>
+            <div class="col-12"><label>Descrição</label><textarea id="pDesc" rows="3" placeholder="Detalhes do produto"></textarea></div>
+          </div>
+          <div class="flex" style="margin-top:12px">
+            <button onclick="addProduto()">Adicionar produto</button>
+            <button class="btn-outline" onclick="seed()">Carregar exemplos</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <h2>Pedidos</h2>
+          <div id="pedidosBox"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card">
+        <h2>Produtos cadastrados</h2>
+        <table class="table" id="tableProdutos">
+          <thead><tr><th>Produto</th><th>Preço</th><th>SKU</th><th style="width:120px">Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> TudoXpress • Pix rapidinho, entrega garantida 🚀
+  </footer>
+</div>
+
+<script>
+  // ====== QR base64 (fornecido por você) ======
+  const PIX_QR_BASE64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMA" +
+  "<?=TRUNCATED_AT_RUNTIME?>";
+  // NOTA: Substitua pela string completa do QR que veio junto deste HTML (ela já está aqui). 
+
+  // ====== Helpers ======
+  const $ = sel => document.querySelector(sel);
+  const BRL = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const read = k => JSON.parse(localStorage.getItem(k) || "null");
+  const write = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+  const uid = () => 'TX' + Date.now().toString();
+
+  // ====== Estado ======
+  let state = {
+    products: read('tx_products') || [],
+    cart: read('tx_cart') || [],
+    orders: read('tx_orders') || []
+  };
+
+  // ====== Navegação ======
+  function switchView(v){
+    ['loja','checkout','admin'].forEach(id=>{
+      document.getElementById('view-'+id).style.display = (id===v)?'block':'none';
+    });
+    if(v==='loja') renderProdutos();
+    if(v==='checkout'){ renderCart(); updateTotals(); }
+    if(v==='admin'){ renderAdmin(); renderPedidos(); }
+    window.scrollTo(0,0);
+  }
+
+  // ====== Produtos ======
+  function renderProdutos(){
+    const box = $('#listaProdutos');
+    if(!state.products.length){
+      box.innerHTML = `<div class="card soft empty">Sem produtos. Vá em <b>Admin</b> e cadastre, ou clique em <b>Carregar exemplos</b>.</div>`;
+      return;
+    }
+    box.innerHTML = state.products.map(p=>`
+      <div class="card">
+        <img class="prod" src="${p.img || 'https://picsum.photos/600?random='+p.id}" alt="">
+        <h3>${p.nome}</h3>
+        <div class="muted" style="min-height:36px">${p.desc || ''}</div>
+        <div class="flex between" style="margin:10px 0">
+          <span class="price">${BRL(p.preco)}</span>
+          <span class="badge">${p.sku || 'sem SKU'}</span>
+        </div>
+        <div class="qty">
+          <input type="number" id="q_${p.id}" min="1" value="1" style="width:90px">
+          <button onclick="addCart('${p.id}')">Adicionar</button>
+        </div>
+      </div>
+    `).join('');
+    updateCartCount();
+  }
+
+  function addProduto(){
+    const nome = $('#pNome').value.trim();
+    const preco = parseFloat($('#pPreco').value);
+    if(!nome || !preco){ alert('Preencha nome e preço'); return; }
+    const obj = {
+      id: uid(), nome, preco,
+      sku: $('#pSKU').value.trim(),
+      img: $('#pImg').value.trim(),
+      desc: $('#pDesc').value.trim()
+    };
+    state.products.push(obj);
+    write('tx_products', state.products);
+    renderProdutos(); renderAdmin();
+    ['#pNome','#pPreco','#pSKU','#pImg','#pDesc'].forEach(s=>$(s).value='');
+  }
+
+  function renderAdmin(){
+    const tbody = document.querySelector('#tableProdutos tbody');
+    if(!state.products.length){ tbody.innerHTML = `<tr><td colspan="4" class="muted">Nenhum produto</td></tr>`; return; }
+    tbody.innerHTML = state.products.map(p=>`
+      <tr>
+        <td>${p.nome}</td>
+        <td>${BRL(p.preco)}</td>
+        <td>${p.sku || '-'}</td>
+        <td>
+          <button class="btn-outline" onclick="editProduto('${p.id}')">Editar</button>
+          <button class="btn-outline" onclick="delProduto('${p.id}')">Remover</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function editProduto(id){
+    const p = state.products.find(x=>x.id===id);
+    if(!p) return;
+    const nome = prompt('Nome', p.nome); if(nome===null) return;
+    const preco = parseFloat(prompt('Preço (use ponto)', p.preco)); if(isNaN(preco)) return;
+    const sku = prompt('SKU', p.sku||'');
+    const img = prompt('URL da imagem', p.img||'');
+    const desc = prompt('Descrição', p.desc||'');
+    Object.assign(p,{nome,preco,sku,img,desc});
+    write('tx_products', state.products);
+    renderProdutos(); renderAdmin();
+  }
+
+  function delProduto(id){
+    if(!confirm('Remover produto?')) return;
+    state.products = state.products.filter(p=>p.id!==id);
+    write('tx_products', state.products);
+    renderProdutos(); renderAdmin();
+  }
+
+  function seed(){
+    if(state.products.length && !confirm('Substituir produtos atuais pelos exemplos?')) return;
+    state.products = [
+      {id:uid(), nome:'Mini Ventilador Portátil', preco:89.9, sku:'VENT-01', img:'https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=1200&auto=format&fit=crop', desc:'Alívio imediato no calor. Bateria recarregável.'},
+      {id:uid(), nome:'Iluminador Magnético', preco:79.9, sku:'LIGHT-02', img:'https://images.unsplash.com/photo-1609599006353-cd5a3a3a3ffd?q=80&w=1200&auto=format&fit=crop', desc:'Perfeito para selfies e vídeos.'},
+      {id:uid(), nome:'Brinquedo Automático para Gatos', preco:99.9, sku:'PET-03', img:'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=1200&auto=format&fit=crop', desc:'Diversão garantida para seu pet.'},
+      {id:uid(), nome:'Lâmpada Robô de Madeira', preco:189.9, sku:'DECO-04', img:'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop', desc:'Decoração criativa e aconchegante.'},
+      {id:uid(), nome:'Fatiador + Garfo de Melancia', preco:39.9, sku:'KITCH-05', img:'https://images.unsplash.com/photo-1560807707-8cc77767d783?q=80&w=1200&auto=format&fit=crop', desc:'Cortes perfeitos e sem bagunça.'},
+    ];
+    write('tx_products', state.products);
+    renderProdutos(); renderAdmin();
+  }
+
+  // ====== Carrinho ======
+  function addCart(id){
+    const p = state.products.find(x=>x.id===id); if(!p) return;
+    const q = Math.max(1, parseInt(document.getElementById('q_'+id)?.value || '1'));
+    const idx = state.cart.findIndex(i=>i.id===id);
+    if(idx>=0) state.cart[idx].q += q; else state.cart.push({id, q});
+    write('tx_cart', state.cart);
+    updateCartCount();
+    alert('Adicionado ao carrinho!');
+  }
+
+  function updateCartCount(){
+    const total = state.cart.reduce((s,i)=>s+i.q,0);
+    $('#cartCount').textContent = total;
+  }
+
+  function renderCart(){
+    const box = $('#cartBox');
+    if(!state.cart.length){ box.innerHTML = `<div class="empty">Seu carrinho está vazio</div>`; updateTotals(); return; }
+    box.innerHTML = state.cart.map(i=>{
+      const p = state.products.find(x=>x.id===i.id);
+      return `
+        <div class="item">
+          <div>
+            <div style="color:#e7e9ef;font-weight:600">${p?.nome||'Produto'}</div>
+            <div class="muted">${p?.sku||''}</div>
+          </div>
+          <div>
+            <input type="number" min="1" value="${i.q}" style="width:70px" onchange="setQty('${i.id}', this.value)">
+          </div>
+          <div class="right">${BRL((p?.preco||0)*i.q)}</div>
+          <div><button class="btn-outline" title="Remover" onclick="remItem('${i.id}')">×</button></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function setQty(id, v){
+    const q = Math.max(1, parseInt(v||'1'));
+    const it = state.cart.find(i=>i.id===id); if(!it) return;
+    it.q = q; write('tx_cart', state.cart);
+    renderCart(); updateTotals(); updateCartCount();
+  }
+  function remItem(id){
+    state.cart = state.cart.filter(i=>i.id!==id);
+    write('tx_cart', state.cart);
+    renderCart(); updateTotals(); updateCartCount();
+  }
+
+  function cartSubTotal(){
+    return state.cart.reduce((s,i)=>{
+      const p = state.products.find(x=>x.id===i.id);
+      return s + (p ? p.preco * i.q : 0);
+    },0);
+  }
+
+  // ====== Frete (simplificado por CEP) ======
+  function calcFrete(){
+    const cep = ($('#cliCEP').value||'').replace(/\D/g,'');
+    const sub = cartSubTotal();
+    if(cep.length !== 8){
+      $('#freteInfo').textContent = 'CEP inválido';
+      $('#freteInfo').style.color = '#fca5a5';
+      updateTotals(0);
+      return 0;
+    }
+    // Regras simples por região (1a casa do CEP)
+    const d = parseInt(cep[0],10);
+    let frete = 19.90; // base
+    if(d===9) frete = 29.90;            // Norte
+    else if(d>=4 && d<=6) frete = 24.90; // NE/CO aproximado
+    else if(d===7 || d===8) frete = 22.90; // Sul
+    // Frete grátis por valor
+    if(sub >= 250) frete = 0;
+    $('#freteInfo').textContent = frete===0 ? 'Frete GRÁTIS' : 'Frete: ' + BRL(frete);
+    $('#freteInfo').style.color = '#c7f9cc';
+    updateTotals(frete);
+    return frete;
+  }
+
+  function updateTotals(forceFrete){
+    const sub = cartSubTotal();
+    const frete = typeof forceFrete==='number' ? forceFrete : ( $('#freteInfo').textContent.includes('R$') ? parseFloat($('#freteInfo').textContent.replace(/[^\d,.-]/g,'').replace(',','.')) : 0 );
+    $('#subTotal').textContent = BRL(sub);
+    $('#freteValor').textContent = BRL(frete||0);
+    const grand = sub + (frete||0);
+    $('#grandTotal').textContent = BRL(grand);
+    $('#totalPix').textContent  = BRL(grand);
+  }
+
+  // ====== Pagamento / Pedido ======
+  function copyPix(){
+    const i = $('#pixKey');
+    i.select(); i.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    alert('Chave PIX copiada!');
+  }
+
+  function validarCliente(){
+    const nome = $('#cliNome').value.trim();
+    const whats = $('#cliWhats').value.trim();
+    const cep = $('#cliCEP').value.trim();
+    const end = $('#cliEnd').value.trim();
+    const num = $('#cliNum').value.trim();
+    const cid = $('#cliCidade').value.trim();
+    const uf = $('#cliUF').value.trim();
+    if(!nome || !whats || !cep || !end || !num || !cid || !uf){
+      alert('Preencha todos os campos do cliente.');
+      return false;
+    }
+    return true;
+  }
+
+  function finalizarPedido(){
+    if(!state.cart.length){ alert('Carrinho vazio'); return; }
+    if(!validarCliente()) return;
+    if(!$('#pixConfirm').checked){ alert('Confirme que realizou o pagamento PIX.'); return; }
+    const cep = $('#cliCEP').value.replace(/\D/g,'');
+    const frete = calcFrete();
+    const order = {
+      id: uid(),
+      data: new Date().toLocaleString('pt-BR'),
+      cliente: {
+        nome: $('#cliNome').value.trim(),
+        whats: $('#cliWhats').value.trim(),
+        cep: cep,
+        end: $('#cliEnd').value.trim(),
+        num: $('#cliNum').value.trim(),
+        bairro: $('#cliBairro').value.trim(),
+        cidade: $('#cliCidade').value.trim(),
+        uf: $('#cliUF').value.trim(),
+      },
+      itens: state.cart.map(i=>{
+        const p = state.products.find(x=>x.id===i.id);
+        return { id:p.id, nome:p.nome, sku:p.sku||'', qtd:i.q, preco:p.preco, total: +(p.preco*i.q).toFixed(2) };
+      }),
+      valores: {
+        subtotal: +cartSubTotal().toFixed(2),
+        frete: +(frete||0).toFixed(2),
+        total: +(cartSubTotal() + (frete||0)).toFixed(2)
+      },
+      pagamento: {
+        metodo: 'PIX',
+        chave: $('#pixKey').value,
+        confirmado: true
+      }
+    };
+    state.orders.unshift(order);
+    write('tx_orders', state.orders);
+
+    // Limpa carrinho
+    state.cart = [];
+    write('tx_cart', state.cart);
+
+    renderCart(); updateTotals(); updateCartCount(); renderPedidos();
+
+    alert('Compra concluída! Pedido: ' + order.id + '\\nVocê pode ver os detalhes em Admin > Pedidos.');
+    switchView('admin');
+  }
+
+  function renderPedidos(){
+    const box = $('#pedidosBox');
+    if(!state.orders.length){ box.innerHTML = `<div class="empty">Sem pedidos ainda</div>`; return; }
+    box.innerHTML = `
+      <table class="table">
+        <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Total</th><th></th></tr></thead>
+        <tbody>
+          ${
+            state.orders.map(o=>`
+              <tr>
+                <td><b>${o.id}</b></td>
+                <td>${o.cliente.nome}<br><span class="muted">${o.cliente.cidade}/${o.cliente.uf}</span></td>
+                <td>${o.data}</td>
+                <td>${BRL(o.valores.total)}</td>
+                <td><button class="btn-outline" onclick='verPedido("${o.id}")'>Ver</button></td>
+              </tr>
+            `).join('')
+          }
+        </tbody>
+      </table>
+    `;
+  }
+
+  function verPedido(id){
+    const o = state.orders.find(x=>x.id===id);
+    if(!o) return;
+    const itens = o.itens.map(i=>`- ${i.qtd}x ${i.nome} (${BRL(i.preco)}): ${BRL(i.total)}`).join('\\n');
+    const dados = `
+Pedido: ${o.id}
+Data: ${o.data}
+
+Cliente:
+${o.cliente.nome} • WhatsApp: ${o.cliente.whats}
+${o.cliente.end}, ${o.cliente.num} - ${o.cliente.bairro}
+${o.cliente.cidade}/${o.cliente.uf} • CEP ${o.cliente.cep}
+
+Itens:
+${itens}
+
+Subtotal: ${BRL(o.valores.subtotal)}
+Frete: ${BRL(o.valores.frete)}
+TOTAL: ${BRL(o.valores.total)}
+
+Pagamento: ${o.pagamento.metodo} (confirmado)
+Chave: ${o.pagamento.chave}
+    `.trim();
+    alert(dados);
+  }
+
+  // ====== Inicialização ======
+  function clearDemo(){
+    if(!confirm('Limpar tudo (produtos, carrinho e pedidos)?')) return;
+    localStorage.removeItem('tx_products');
+    localStorage.removeItem('tx_cart');
+    localStorage.removeItem('tx_orders');
+    location.reload();
+  }
+
+  (function init(){
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Carrega QR
+    const img = $('#pixQR');
+    img.src = PIX_QR_BASE64;
+    // Seed inicial se não houver produtos
+    if(!state.products.length){ seed(); }
+    renderProdutos();
+  })();
+</script>
+</body>
+</html>
